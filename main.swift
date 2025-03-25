@@ -1,91 +1,71 @@
 import Foundation
 
-// Enum para definir as prioridades de notificação
+// Enum de Prioridade
 enum Prioridade {
     case baixa, media, alta
+    
+    var descricao: String {
+        switch self {
+        case .baixa: return "[Baixa Prioridade]"
+        case .media: return "[Média Prioridade]"
+        case .alta: return "[Alta Prioridade] URGENTE!"
+        }
+    }
 }
 
 // Protocolo Notificavel
 protocol Notificavel {
-    var mensagem: String { get set }
-    var prioridade: Prioridade { get set }
-    
+    var mensagem: String { get }
+    var prioridade: Prioridade { get }
     func enviarNotificacao()
 }
-// Extensão do protocolo Notificavel com implementação padrão
+
 extension Notificavel {
+    // Implementação padrão para enviar notificação
     func enviarNotificacao() {
-        print("Enviando notificação...")
+        print("\(mensagem) \(prioridade.descricao)")
     }
 }
-// Struct Email
+
+// Struct para Email
 struct Email: Notificavel {
-    var mensagem: String
-    var prioridade: Prioridade
-    var enderecoEmail: String
+    let mensagem: String
+    let prioridade: Prioridade
+    let enderecoEmail: String
     
     func enviarNotificacao() {
-        let prioridadeTexto: String
-        switch prioridade {
-        case .baixa:
-            prioridadeTexto = "[Baixa Prioridade]"
-        case .media:
-            prioridadeTexto = "[Média Prioridade]"
-        case .alta:
-            prioridadeTexto = "[Alta Prioridade] URGENTE!"
-        }
-        print("Enviando email para \(enderecoEmail): \(mensagem) \(prioridadeTexto)")
+        print("Enviando email para \(enderecoEmail): \(mensagem) \(prioridade.descricao)")
     }
 }
 
-// Struct SMS
+// Struct para SMS
 struct SMS: Notificavel {
-    var mensagem: String
-    var prioridade: Prioridade
-    var numeroTelefone: String
+    let mensagem: String
+    let prioridade: Prioridade
+    let numeroTelefone: String
     
     func enviarNotificacao() {
-        let prioridadeTexto: String
-        switch prioridade {
-        case .baixa:
-            prioridadeTexto = "[Baixa Prioridade]"
-        case .media:
-            prioridadeTexto = "[Média Prioridade]"
-        case .alta:
-            prioridadeTexto = "[Alta Prioridade] URGENTE!"
-        }
-        print("Enviando SMS para \(numeroTelefone): \(mensagem) \(prioridadeTexto)")
+        print("Enviando SMS para \(numeroTelefone): \(mensagem) \(prioridade.descricao)")
     }
 }
 
-// Struct PushNotification
+// Struct para Push Notification
 struct PushNotification: Notificavel {
-    var mensagem: String
-    var prioridade: Prioridade
-    var tokenDispositivo: String
+    let mensagem: String
+    let prioridade: Prioridade
+    let tokenDispositivo: String
     
     func enviarNotificacao() {
-        let prioridadeTexto: String
-        switch prioridade {
-        case .baixa:
-            prioridadeTexto = "[Baixa Prioridade]"
-        case .media:
-            prioridadeTexto = "[Média Prioridade]"
-        case .alta:
-            prioridadeTexto = "[Alta Prioridade] URGENTE!"
-        }
-        print("Enviando Push Notification para o dispositivo \(tokenDispositivo): \(mensagem) \(prioridadeTexto)")
+        print("Enviando Push Notification para \(tokenDispositivo): \(mensagem) \(prioridade.descricao)")
     }
 }
-// Criar instâncias de canais de notificação
-let email = Email(mensagem: "Promoção especial para você!", prioridade: .alta, enderecoEmail: "cliente@example.com")
-let sms = SMS(mensagem: "Lembre-se de sua reunião às 14h.", prioridade: .media, numeroTelefone: "+5511999999999")
-let pushNotification = PushNotification(mensagem: "Alerta de segurança na sua conta.", prioridade: .baixa, tokenDispositivo: "abcd1234")
 
-// Array com canais de notificação
-var canais: [Notificavel] = [email, sms, pushNotification]
+// Instâncias de canais de notificação com nova mensagem de evento e DDD 41
+let notificacoes: [Notificavel] = [
+    Email(mensagem: "Promoção especial para você!", prioridade: .alta, enderecoEmail: "cliente@example.com"),
+    SMS(mensagem: "Lembre-se de que o evento começa às 18h.", prioridade: .media, numeroTelefone: "+5541 90000-0000"),
+    PushNotification(mensagem: "Alerta de segurança na sua conta.", prioridade: .baixa, tokenDispositivo: "abcd1234")
+]
 
-// Iterar sobre o array e enviar notificações
-for canal in canais {
-    canal.enviarNotificacao()
-}
+// Enviar notificações
+notificacoes.forEach { $0.enviarNotificacao() }
